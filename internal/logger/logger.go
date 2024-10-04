@@ -11,6 +11,7 @@ import (
 var stdLogger atomic.Pointer[Logger]
 var errLogger atomic.Pointer[Logger]
 
+// Logger wraps slog.Logger
 type Logger struct {
 	*slog.Logger
 }
@@ -59,11 +60,13 @@ type ConfigOpt struct {
 	Level Level
 }
 
+// WithLevel sets a threshold to the logger options
 func (opt *ConfigOpt) WithLevel(level string) *ConfigOpt {
 	opt.Level = newLogLevel(level)
 	return opt
 }
 
+// NewConfigOpt creates ConfigOpt
 func NewConfigOpt() *ConfigOpt {
 	return &ConfigOpt{}
 }
@@ -112,23 +115,28 @@ func fmtErr(err error) slog.Value {
 	return slog.GroupValue(groupValues...)
 }
 
+// Init sets the initial values of the logger, initializing stdout and stderr loggers
 func Init(cfgOpt *ConfigOpt) {
 	initStdLogger(cfgOpt)
 	initErrLogger()
 }
 
+// Debug logs debug msg and args
 func Debug(msg string, args ...any) {
 	stdLogger.Load().Debug(msg, args...)
 }
 
+// Info logs info msg and args
 func Info(msg string, args ...any) {
 	stdLogger.Load().Info(msg, args...)
 }
 
+// Warn logs warning msg and args
 func Warn(msg string, args ...any) {
 	stdLogger.Load().Warn(msg, args...)
 }
 
+// Error logs error msg and args to the stderr fd
 func Error(msg string, args ...any) {
 	errLogger.Load().Error(msg, args...)
 }

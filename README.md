@@ -9,3 +9,8 @@ sudo docker compose up -d
 ```shell
 export $(grep -v '^#' .env | xargs) && python3 scripts/publisher.py
 ```
+
+## Monitor logs
+```shell
+sudo docker compose logs -f monitor
+```

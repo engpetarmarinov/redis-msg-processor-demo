@@ -11,11 +11,12 @@ import (
 	"time"
 )
 
+// Consumer represents a stream consumer group that processes messages
 type Consumer struct {
 	redisClient *redis.Client
 }
 
-// NewConsumer inits *Consumer
+// NewConsumer inits Consumer
 func NewConsumer(client *redis.Client) *Consumer {
 	return &Consumer{
 		redisClient: client,

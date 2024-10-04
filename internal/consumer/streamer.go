@@ -8,14 +8,17 @@ import (
 	"time"
 )
 
+// Streamer is a way to sub a channel and stream it to a stream
 type Streamer struct {
 	redisClient *redis.Client
 }
 
+// NewStreamer inits Streamer
 func NewStreamer(redisClient *redis.Client) *Streamer {
 	return &Streamer{redisClient: redisClient}
 }
 
+// Start starts listening to a pubsub channel and streams every message to a stream
 func (s *Streamer) Start(ctx context.Context, channel string, stream string) {
 	logger.Info("Streaming channel", "stream", stream, "channel", channel)
 	pubsub := s.redisClient.Subscribe(ctx, channel)

@@ -8,14 +8,17 @@ import (
 	"time"
 )
 
+// Monitor holds the functionality to give some stats for a stream
 type Monitor struct {
 	redisClient *redis.Client
 }
 
+// NewMonitor inits Monitor
 func NewMonitor(redisClient *redis.Client) *Monitor {
 	return &Monitor{redisClient: redisClient}
 }
 
+// Start starts logging stats for a stream per interval
 func (m *Monitor) Start(ctx context.Context, stream string, interval int) {
 	ticker := time.NewTicker(time.Duration(interval) * time.Second)
 	defer ticker.Stop()
