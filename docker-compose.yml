@@ -1,0 +1,54 @@
+version: '3.4'
+services:
+  streamer:
+    build:
+      context: .
+      dockerfile: docker/consumer.Dockerfile
+    env_file: .env
+    depends_on:
+      - broker
+    command: [ "stream", "messages:published", "messages:streamed" ]
+
+  consumer:
+    build:
+      context: .
+      dockerfile: docker/consumer.Dockerfile
+    deploy:
+      mode: replicated
+      replicas: 4
+    env_file: .env
+    depends_on:
+      - broker
+    command: [ "consume", "messages:streamed", "--size=8", "--limit=100" ]
+
+  monitor:
+    build:
+      context: .
+      dockerfile: docker/consumer.Dockerfile
+    env_file: .env
+    depends_on:
+      - broker
+    command: [ "monitor", "messages:processed", "--interval=3" ]
+
+  broker:
+    image: "redis:7.4-alpine"
+    env_file: .env
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - broker:/data
+    command:
+      - /bin/sh
+      - -c
+      - |
+        redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}" 
+        --port "$${REDIS_PORT:?REDIS_PORT variable is not set}" 
+        /usr/local/etc/redis/redis.conf"
+
+volumes:
+  broker:
+
+networks:
+  app-network:
+    driver: bridge
