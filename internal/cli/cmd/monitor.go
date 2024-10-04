@@ -29,8 +29,8 @@ $ consumer-cli monitor messages:processed --interval=3"`,
 
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
-			s := consumer.NewMonitor(redisClient)
-			go s.Start(ctx, stream, interval)
+			m := consumer.NewMonitor(redisClient)
+			go m.Start(ctx, stream, interval)
 			sigCh := make(chan os.Signal, 1)
 			signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 			<-sigCh
